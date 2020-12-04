@@ -42,7 +42,7 @@ def showPlot(points):
 
 def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion):
     # エンコーダの最初の隠れ状態
-    encoder_hidden = encoder.initHidden()
+    encoder_hidden = encoder.initHidden().to(device)
 
     encoder_optimizer.zero_grad()
     decoder_optimizer.zero_grad()
@@ -102,8 +102,8 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
 
     for iter in range(1, n_iters + 1):
         training_pair = training_pairs[iter - 1]
-        input_tensor = training_pair[0]  # 仏
-        target_tensor = training_pair[1]  #英
+        input_tensor = training_pair[0].to(device)  # 仏
+        target_tensor = training_pair[1].to(device)  #英
 
         loss = train(input_tensor, target_tensor, encoder,
                      decoder, encoder_optimizer, decoder_optimizer, criterion)
