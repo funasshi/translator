@@ -48,7 +48,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
 
     input_tensor.to(device)
     target_tensor.to(device)
-    encoder_hidden = encoder.initHidden()
+    encoder_hidden = encoder.initHidden().to(device)
 
     encoder_optimizer.zero_grad()
     decoder_optimizer.zero_grad()
