@@ -45,7 +45,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
           max_length=MAX_LENGTH):
     # エンコーダの最初の隠れ状態
 
-
+    print(device)
     input_tensor.to(device)
     print(input_tensor.device)
     target_tensor.to(device)
