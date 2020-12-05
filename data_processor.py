@@ -88,7 +88,7 @@ def indexesFromSentence(lang, sentence):
 
 def tensorFromSentence(lang, sentence):
     indexes = indexesFromSentence(lang, sentence)
-    indexes.append(0)
+    indexes.append(1)
     return torch.tensor(indexes, dtype=torch.long).view(-1, 1)
 
 

@@ -130,7 +130,9 @@ hidden_size = 150
 encoder = EncoderRNN(input_lang.n_words, hidden_size).to(device)
 decoder = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1).to(device)
 
-trainIters(encoder, decoder, 30000, print_every=5000)
+
+n_iters=int(input("n_iters"))
+trainIters(encoder, decoder, n_iters, print_every=5000)
 
 
 encoder_path = 'encoder.pth'
