@@ -21,7 +21,6 @@ class EncoderRNN(nn.Module):
 
         # output      (入力単語数,　batch=1 ,hidden_size)
         # hidden      (1,　batch=1 ,hidden_size)
-        print(input.device)
         embedded = self.embedding(input).view(input.shape[0], 1, -1)
         output, hidden = self.gru(embedded, hidden)
         return output, hidden

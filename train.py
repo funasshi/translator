@@ -47,6 +47,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
 
 
     input_tensor.to(device)
+    print(input_tensor.device)
     target_tensor.to(device)
     encoder_hidden = encoder.initHidden().to(device)
 
@@ -133,7 +134,7 @@ encoder = EncoderRNN(input_lang.n_words, hidden_size).to(device)
 decoder = AttnDecoderRNN_default(hidden_size, output_lang.n_words, dropout_p=0.1).to(device)
 
 
-n_iters=int(input("n_iters"))
+n_iters=int(input("n_iters:"))
 trainIters(encoder, decoder, n_iters, print_every=5000)
 
 
