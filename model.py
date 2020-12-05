@@ -104,7 +104,7 @@ class AttnDecoderRNN_default(nn.Module):
 
         ##### TODO
         attn = self.attn(concat)  # (1, hidden*2)  ->  (1, max_length)
-        attn_weights = torch.nn.functional.softmax(attn)  # (1, max_length)
+        attn_weights = torch.nn.functional.softmax(attn,dim=1)  # (1, max_length)
 
         # (1, 1, hidden_size) <= (1, 1, max_length) × (1, max_length, hidden_size)
         attn_applied = torch.bmm(attn_weights.view(1, *attn_weights.shape),
