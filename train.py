@@ -134,7 +134,7 @@ trainIters(encoder, decoder, 30000, print_every=5000)
 
 
 encoder_path = 'encoder.pth'
-decoder_path = 'encoder.pth'
+decoder_path = 'decoder.pth'
 
 torch.save(encoder.to('cpu').state_dict(), encoder_path)
 torch.save(decoder.to('cpu').state_dict(), decoder_path)
