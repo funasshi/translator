@@ -61,6 +61,12 @@ def readLangs(lang1, lang2, reverse=False):
 
     return input_lang, output_lang, pairs
 
+def filterPair(p, MAX_LENGTH):
+    return len(p[0].split(' ')) < MAX_LENGTH and len(p[1].split(' ')) < MAX_LENGTH
+
+
+def filterPairs(pairs, MAX_LENGTH=8):
+    return [pair for pair in pairs if filterPair(pair ,MAX_LENGTH)]
 
 def prepareData(lang1, lang2, reverse=False):
     if os.path.exists("data.binaryfile"):
@@ -68,6 +74,7 @@ def prepareData(lang1, lang2, reverse=False):
         input_lang, output_lang, pairs=pickle.load(f)
     else:
         input_lang, output_lang, pairs = readLangs(lang1, lang2, reverse)
+        pairs=filterPairs(pairs)
         print("Read %s sentence pairs" % len(pairs))
         print("Trimmed to %s sentence pairs" % len(pairs))
         print("Counting words...")
@@ -91,8 +98,7 @@ def tensorFromSentence(lang, sentence):
     indexes.append(1)
     return torch.tensor(indexes, dtype=torch.long).view(-1, 1)
 
-
-def tensorsFromPair(pair,input_lang,output_lang):
+def tensorsFromPair(pair, input_lang, output_lang):
     input_tensor = tensorFromSentence(input_lang, pair[0])
     target_tensor = tensorFromSentence(output_lang, pair[1])
     return (input_tensor, target_tensor)

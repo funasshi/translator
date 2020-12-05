@@ -12,7 +12,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 input_lang, output_lang, pairs=prepareData("eng","deu")
 SOS_token = 0
 EOS_token = 1
-# MAX_LENGTH=20
+MAX_LENGTH=10
 
 
 def asMinutes(s):
@@ -40,17 +40,19 @@ def showPlot(points):
     ax.yaxis.set_major_locator(loc)
     plt.plot(points)
 
-def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion):
+
+def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion,
+          max_length=MAX_LENGTH):
     # エンコーダの最初の隠れ状態
-    encoder_hidden = encoder.initHidden().to(device)
+    encoder_hidden = encoder.initHidden()
 
     encoder_optimizer.zero_grad()
     decoder_optimizer.zero_grad()
 
-    input_length = input_tensor.size(0)  # 入力単語の数
-    target_length = target_tensor.size(0) # 出力単語の数
+    input_length = input_tensor.size(0)
+    target_length = target_tensor.size(0)
 
-    encoder_outputs = torch.zeros(input_length, encoder.hidden_size, device=device)
+    encoder_outputs = torch.zeros(max_length, encoder.hidden_size, device=device)
 
     loss = 0
 
@@ -71,7 +73,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
     decoder_hidden = encoder_hidden
 
     for di in range(target_length):
-        decoder_output, decoder_hidden = decoder(
+        decoder_output, decoder_hidden, decoder_attention = decoder(
             decoder_input, decoder_hidden, encoder_outputs)
         topv, topi = decoder_output.topk(1)  # デコーダ出力の中で一番大きい値とそのインデックス
         decoder_input = topi.squeeze().detach()  # 勾配計算されないようにdetachします
@@ -87,7 +89,6 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
 
     return loss.item() / target_length
 
-
 def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.01):
     start = time.time()
     plot_losses = []
@@ -96,14 +97,14 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
 
     encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
     decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
-    training_pairs = [tensorsFromPair(random.choice(pairs),input_lang,output_lang)  # 1.前処理で作成したpairからn_iter分だけ抽出
+    training_pairs = [tensorsFromPair(random.choice(pairs), input_lang, output_lang)  # 1.前処理で作成したpairからn_iter分だけ抽出
                       for i in range(n_iters)]
     criterion = nn.NLLLoss() # 誤差関数の定義
 
     for iter in range(1, n_iters + 1):
         training_pair = training_pairs[iter - 1]
-        input_tensor = training_pair[0].to(device)  # 仏
-        target_tensor = training_pair[1].to(device)  #英
+        input_tensor = training_pair[0]  # 仏
+        target_tensor = training_pair[1]  #英
 
         loss = train(input_tensor, target_tensor, encoder,
                      decoder, encoder_optimizer, decoder_optimizer, criterion)
@@ -123,12 +124,9 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
             plot_losses.append(plot_loss_avg)
             plot_loss_total = 0
 
-    # lossをplot
-    showPlot(plot_losses)
-
 hidden_size = 150
 encoder = EncoderRNN(input_lang.n_words, hidden_size).to(device)
-decoder = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1).to(device)
+decoder = AttnDecoderRNN_default(hidden_size, output_lang.n_words, dropout_p=0.1).to(device)
 
 
 n_iters=int(input("n_iters"))
