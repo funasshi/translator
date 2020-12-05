@@ -60,7 +60,7 @@ class AttnDecoderRNN(nn.Module):
         s=torch.mv(encoder_outputs,gru_output.view(-1))
         a=F.softmax(s)
         c=torch.t(torch.mv(torch.t(encoder_outputs), a))
-        output = F.log_softmax(self.out(c)).view(1,-1)
+        output = F.log_softmax(self.out(c),dim=0).view(1,-1)
         return output, hidden
 
     def initHidden(self):
