@@ -44,6 +44,10 @@ def showPlot(points):
 def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, decoder_optimizer, criterion,
           max_length=MAX_LENGTH):
     # エンコーダの最初の隠れ状態
+
+
+    input_tensor.to(device)
+    target_tensor.to(device)
     encoder_hidden = encoder.initHidden()
 
     encoder_optimizer.zero_grad()
