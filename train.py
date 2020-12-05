@@ -46,7 +46,7 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
     # エンコーダの最初の隠れ状態
 
     print(device)
-    input_tensor.to(device)
+    input_tensor=input_tensor.to(device)
     print(input_tensor.device)
     target_tensor.to(device)
     encoder_hidden = encoder.initHidden().to(device)
