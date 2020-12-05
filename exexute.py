@@ -60,3 +60,4 @@ def translate(input):
 
 
 print(translate(input()))
+

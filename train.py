@@ -98,8 +98,8 @@ def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, lear
     print_loss_total = 0
     plot_loss_total = 0
 
-    encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
-    decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
+    encoder_optimizer = optim.Adam(encoder.parameters(), lr=learning_rate)
+    decoder_optimizer = optim.Adam(decoder.parameters(), lr=learning_rate)
     training_pairs = [tensorsFromPair(random.choice(pairs), input_lang, output_lang)  # 1.前処理で作成したpairからn_iter分だけ抽出
                       for i in range(n_iters)]
     criterion = nn.NLLLoss() # 誤差関数の定義
