@@ -11,7 +11,7 @@ input_lang, output_lang, pairs=prepareData("eng","deu")
 
 hidden_size=150
 encoder = EncoderRNN(input_lang.n_words, hidden_size)
-decoder = AttnDecoderRNN(hidden_size, output_lang.n_words, dropout_p=0.1)
+decoder = AttnDecoderRNN_default(hidden_size, output_lang.n_words, dropout_p=0.1)
 
 encoder_path = 'encoder.pth'
 decoder_path = 'decoder.pth'
@@ -26,7 +26,7 @@ def translate(input):
     input_tensor=tensorFromSentence(input_lang,input)
     output_list=[]
     input_length = input_tensor.size(0)  # 入力単語の数
-    encoder_outputs = torch.zeros(input_length, encoder.hidden_size)
+    encoder_outputs = torch.zeros(10, encoder.hidden_size)
 
     encoder_hidden = encoder.initHidden()
 
@@ -47,7 +47,7 @@ def translate(input):
     decoder_hidden = encoder_hidden
 
     while True:
-        decoder_output, decoder_hidden = decoder(
+        decoder_output, decoder_hidden ,attn_weights= decoder(
             decoder_input, decoder_hidden, encoder_outputs)
         topv, topi = decoder_output.topk(1)  # デコーダ出力の中で一番大きい値とそのインデックス
         decoder_input = topi.squeeze().detach()  # 勾配計算されないようにdetachします
