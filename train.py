@@ -136,7 +136,7 @@ decoder = AttnDecoderRNN_default(hidden_size, output_lang.n_words, dropout_p=0.1
 
 
 n_iters=int(input("n_iters:"))
-learning_rate=int(input("lr:"))
+learning_rate=float(input("lr:"))
 opt_type=input("opt_type:")
 trainIters(encoder, decoder, n_iters,learning_rate,opt_type=opt_type, print_every=5000)
 
