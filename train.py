@@ -92,14 +92,17 @@ def train(input_tensor, target_tensor, encoder, decoder, encoder_optimizer, deco
 
     return loss.item() / target_length
 
-def trainIters(encoder, decoder, n_iters, print_every=1000, plot_every=100, learning_rate=0.001):
+def trainIters(encoder, decoder, n_iters, learning_rate, opt_type="SGD", print_every=1000, plot_every=100):
     start = time.time()
     plot_losses = []
     print_loss_total = 0
     plot_loss_total = 0
-
-    encoder_optimizer = optim.Adam(encoder.parameters(), lr=learning_rate)
-    decoder_optimizer = optim.Adam(decoder.parameters(), lr=learning_rate)
+    if opt_type=="Adam":
+        encoder_optimizer = optim.Adam(encoder.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.Adam(decoder.parameters(), lr=learning_rate)
+    else:
+        encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
+        decoder_optimizer = optim.SGD(decoder.parameters(), lr=learning_rate)
     training_pairs = [tensorsFromPair(random.choice(pairs), input_lang, output_lang)  # 1.前処理で作成したpairからn_iter分だけ抽出
                       for i in range(n_iters)]
     criterion = nn.NLLLoss() # 誤差関数の定義
@@ -133,7 +136,9 @@ decoder = AttnDecoderRNN_default(hidden_size, output_lang.n_words, dropout_p=0.1
 
 
 n_iters=int(input("n_iters:"))
-trainIters(encoder, decoder, n_iters, print_every=5000)
+learning_rate=int(input("lr:"))
+opt_type=input("opt_type:")
+trainIters(encoder, decoder, n_iters,learning_rate,opt_type=opt_type, print_every=5000)
 
 
 encoder_path = 'encoder.pth'
